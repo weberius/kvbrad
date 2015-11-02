@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="">
+<meta name="author" content="">
+<title>Denkmal in Köln</title>
+
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+<link rel="stylesheet"
+	href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+<link rel="stylesheet"
+	href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css">
+<link rel="stylesheet"
+	href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css">
+<link rel="stylesheet"
+	href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.css">
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+<link rel="stylesheet"
+	href="assets/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css">
+<link rel="stylesheet" href="assets/css/app.css">
+
+<link rel="apple-touch-icon" sizes="76x76"
+	href="assets/img/favicon-76.png">
+<link rel="apple-touch-icon" sizes="120x120"
+	href="assets/img/favicon-120.png">
+<link rel="apple-touch-icon" sizes="152x152"
+	href="assets/img/favicon-152.png">
+<link rel="icon" sizes="196x196" href="assets/img/favicon-196.png">
+<link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+</head>
+
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<div class="navbar-icon-container">
+					<a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i
+						class="fa fa-bars fa-lg white"></i></a> <a href="#"
+						class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i
+						class="fa fa-search fa-lg white"></i></a>
+				</div>
+				<a class="navbar-brand" href="#">Denkmal in Köln</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<form class="navbar-form navbar-right" role="search">
+					<div class="form-group has-feedback">
+						<input id="searchbox" type="text"
+							placeholder="Suche nach Adresse..." class="form-control">
+						<span id="searchicon" class="fa fa-search form-control-feedback"></span>
+					</div>
+				</form>
+				<ul class="nav navbar-nav">
+					<li><a href="#" data-toggle="collapse"
+						data-target=".navbar-collapse.in" id="about-btn"><i
+							class="fa fa-question-circle white"></i>&nbsp;&nbsp;About</a></li>
+					<li class="dropdown"><a id="toolsDrop" href="#" role="button"
+						class="dropdown-toggle" data-toggle="dropdown"><i
+							class="fa fa-globe white"></i>&nbsp;&nbsp;Tools <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#" data-toggle="collapse"
+								data-target=".navbar-collapse.in" id="full-extent-btn"><i
+									class="fa fa-arrows-alt"></i>&nbsp;&nbsp;Überblick Köln</a></li>
+							<li><a href="#" data-toggle="collapse"
+								data-target=".navbar-collapse.in" id="legend-btn"><i
+									class="fa fa-picture-o"></i>&nbsp;&nbsp;Zeige nicht geocodierte
+									Denkmäler</a></li>
+							<!-- 
+                <li class="divider hidden-xs"></li>
+                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn"><i class="fa fa-user"></i>&nbsp;&nbsp;Login</a></li>
+                 -->
+						</ul></li>
+					<li class="dropdown"><a class="dropdown-toggle"
+						id="downloadDrop" href="#" role="button" data-toggle="dropdown"><i
+							class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Download <b
+							class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="data/Denkmalliste.csv"
+								download="data/Denkmalliste.csv" target="_blank"
+								data-toggle="collapse" data-target=".navbar-collapse.in"><i
+									class="fa fa-download"></i>&nbsp;&nbsp;alle Denkm&auml;ler
+									(csv)</a></li>
+							<li><a href="data/geo/Denkmalliste.csv"
+								download="data/geo/Denkmalliste.csv" target="_blank"
+								data-toggle="collapse" data-target=".navbar-collapse.in"><i
+									class="fa fa-download"></i>&nbsp;&nbsp;Denkm&auml;ler
+									georeferenziert (csv)</a></li>
+							<li><a href="data/nogeo/Denkmalliste.csv"
+								download="data/nogeo/Denkmalliste.csv" target="_blank"
+								data-toggle="collapse" data-target=".navbar-collapse.in"><i
+									class="fa fa-download"></i>&nbsp;&nbsp;Denkm&auml;ler nicht
+									georeferenziert (csv)</a></li>
+						</ul></li>
+				</ul>
+			</div>
+			<!--/.navbar-collapse -->
+		</div>
+	</div>
+
+	<div id="container">
+		<div id="map"></div>
+	</div>
+
+	<div id="loading">
+		<div class="loading-indicator">
+			<div class="progress progress-striped active">
+				<div class="progress-bar progress-bar-info progress-bar-full"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button class="close" type="button" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Baudenkm&auml;ler in K&ouml;ln</h4>
+				</div>
+				<div class="modal-body">
+					<ul class="nav nav-tabs" id="aboutTabs">
+						<li class="active"><a href="#about" data-toggle="tab"><i
+								class="fa fa-question-circle"></i>&nbsp;&Uuml;ber dieses Projekt</a></li>
+						<li><a href="#disclaimer" data-toggle="tab"><i
+								class="fa fa-exclamation-circle"></i>&nbsp;Disclaimer</a></li>
+					</ul>
+					<div class="tab-content" id="aboutTabsContent">
+						<div class="tab-pane fade active in" id="about">
+							<p>
+								Diese Webseite zeigt auf Basis der <a
+									href="http://www.offenedaten-koeln.de/dataset/denkmalliste-stadt-koeln">Denkmalliste
+									Stadt Koeln</a> die Baudenkm&auml;ler der Stadt K&ouml;ln auf der Karte von Köln an. Diese werden durch das <a
+									href="http://www.offenedaten-koeln.de/" target="_blank">Offene
+									Daten Portal</a> der <a href="http://www.koeln.de" target="_blank">Stadt
+									Köln</a> zur Verfügung gestellt.
+							</p>
+							<div class="panel panel-primary">
+								<div class="panel-heading">Features</div>
+								<ul class="list-group">
+									<li class="list-group-item">Anzeige der Informationen
+										sowohl im Desktop-Browser, als auch auf Tablet und Smartphone
+										durch Verwendung von<a
+										href="https://github.com/bmcbride/bootleaf" target="_blank">Bootleaf</a>,
+										<a href="http://getbootstrap.com/" target="_blank">Bootstrap
+											3</a> und <a href="http://leafletjs.com/" target="_blank">Leaflet</a>.
+									</li>
+									<li class="list-group-item">Auswahl der Anzeige von
+										Baudenkmälern auf Basis der Angabe des Baujahrs.</li>
+									<li class="list-group-item">Geocodierung auf Basis von <a
+										href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a>
+										mit Hilfe von <a
+										href="http://wiki.openstreetmap.org/wiki/Nominatim"
+										target="_blank">Nominatim</a>
+									</li>
+									<li class="list-group-item">GPS basierte Verortung, zur
+										Ermittlung des aktuellen Standortes mit <a
+										href="https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/"
+										target="_blank">Mapbox Leaflet Locate</a>
+									</li>
+									<li class="list-group-item">Anzeige von Baudenkmälern, die
+										nicht geocodiert werden konnten im Bereich Tools mit mit Hilfe
+										von <a href="https://www.datatables.net" target="_blank">DataTables</a>
+									</li>
+									<li class="list-group-item">Marker clustering von
+										Baudenkmälern bei höheren Zoomleveln zur Erhöhung der
+										Anzeigegeschwindigkeit mit <a
+										href="https://github.com/Leaflet/Leaflet.markercluster"
+										target="_blank">Leaflet marker cluster plugin</a>
+									</li>
+									<li class="list-group-item">Laden der Daten in den Browser
+										und Suche über Denkmal und Stadtteile mit <a
+										href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>
+									</li>
+									<li class="list-group-item">Download aufbereiteter
+										Informationen im csv-Format im Bereich Downloads</li>
+								</ul>
+							</div>
+						</div>
+						<div id="disclaimer" class="tab-pane fade text-danger">
+							<p>
+								<strong>1. Haftungsbeschränkung</strong><br /> Die Inhalte des
+								Internetauftritts wurden mit größtmöglicher Sorgfalt und nach
+								bestem Gewissen erstellt. Dennoch übernimmt der Anbieter dieser
+								Webseite keine Gewähr für die Aktualität, Vollständigkeit und
+								Richtigkeit der bereitgestellten Seiten und Inhalte.
+							</p>
+							<p>
+								<strong>2. Externe Links</strong><br /> Die Webseite enthält
+								sog. „externe Links“ (Verlinkungen) zu anderen Webseiten, auf
+								deren Inhalt der Anbieter der Webseite keinen Einfluss hat. Aus
+								diesem Grund kann der Anbieter für diese Inhalte auch keine
+								Gewähr übernehmen.<br />
+							</p>
+							<p>
+								<strong>3. Datenschutz</strong><br /> Durch den Besuch des
+								Internetauftritts können Informationen (Datum, Uhrzeit,
+								aufgerufene Seite) über den Zugriff auf dem Server gespeichert
+								werden. Es werden keine personenbezogenenen (z. B. Name,
+								Anschrift oder E-Mail-Adresse) Daten, gespeichert.
+							</p>
+							<p>
+								<strong>Quelle</strong>: <a
+									href="http://www.mustervorlage.net/homepage-kostenlos">Disclaimer
+									und Websites erstellen</a>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+
+	<div class="modal fade" id="legendModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Nicht geocodierte Denkm&auml;ler</h4>
+				</div>
+				<div class="modal-body">
+					<table id="bikes" class="display" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Nr.</th>
+								<th>Name</th>
+								<th>lat</th>
+								<th>lng</th>
+								<th>timestamp</th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<th>Nr.</th>
+								<th>Name</th>
+								<th>lat</th>
+								<th>lng</th>
+								<th>timestamp</th>
+							</tr>
+						</thead>
+						</tfoot>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+
+	<div class="modal fade" id="featureModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button class="close" type="button" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title text-primary" id="feature-title"></h4>
+				</div>
+				<div class="modal-body" id="feature-info"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+
+	<div class="modal fade" id="attributionModal" tabindex="-1"
+		role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button class="close" type="button" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">
+						Developed by <a href='http://github.com/weberius/denkmalinkoeln'
+							target='_blank'>Wolfram Eberius</a>
+					</h4>
+				</div>
+				<div class="modal-body">
+					<div id="attribution"></div>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+	<script
+		src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js"></script>
+	<script
+		src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
+	<script
+		src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+	<script
+		src="assets/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js"></script>
+	<script src="assets/js/app.js"></script>
+</body>
+</html>
