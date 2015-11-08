@@ -153,17 +153,18 @@ function pointToLayerDenkmal(feature, latlng) {
 function onEachFeatureDenkmal(feature, layer) {
 	if (feature.properties) {
 		var content = "<table class='table table-striped table-bordered table-condensed'>"
-				+ "<tr><th>Kurzbezeichnung</th><td>"
-				+ feature.properties.kurzbezeichnung
+				+ "<tr><th>Name</th><td>"
+				+ feature.properties.name
 				+ "</td></tr>"
-				+ "<tr><th>Denkmalnummer</th><td>"
-				+ feature.properties.denkmalnummer
+				+ "<tr><th>Nummber</th><td>"
+				+ feature.properties.number
 				+ "</td></tr>"
-				+ "<tr><th>Baujahr</th><td>"
-				+ feature.properties.baujahr
+				+ "<tr><th>Timestamps</th><td>"
+				+ feature.properties.timestamps
 				+ "</td></tr>"
-				+ "<tr><th>Adresse</th><td>"
-				+ feature.properties.adresse + "</td></tr>" + "<table>";
+				+ "<tr><th>Coordinates</th><td>"
+				+ feature.properties.coordinates
+				+ "</td></tr>" + "<table>";
 		layer.on({
 			click : function(e) {
 				$("#feature-title").html(feature.properties.kurzbezeichnung);
