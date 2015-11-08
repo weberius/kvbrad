@@ -209,7 +209,7 @@ var allBikes = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
 	onEachFeature : onEachFeatureDenkmal
 });
-$.getJSON("data/service.json", function(data) {
+$.getJSON("/kvbradpositions/service", function(data) {
 	allBikes.addData(data);
 });
 
@@ -455,17 +455,19 @@ if (!L.Browser.touch) {
 // datatable
 $(document).ready(function() {
 	$('#bikes').DataTable({
-		"ajax" : "data/datatable.json",
+		"ajax" : "/kvbradlive/service",
 		"columns" : [ {
-			"data" : "nummber"
+			"data" : "uid"
 		}, {
 			"data" : "name"
+		}, {
+			"data" : "bike"
+		}, {
+			"data" : "number"
 		}, {
 			"data" : "lat"
 		}, {
 			"data" : "lng"
-		}, {
-			"data" : "baujahr"
 		}, {
 			"data" : "timestamp"
 		} ]
