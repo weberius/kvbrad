@@ -455,7 +455,7 @@ if (!L.Browser.touch) {
 // datatable
 $(document).ready(function() {
 	$('#bikes').DataTable({
-		"ajax" : "/kvbradlive/service",
+		"ajax" : "/kvbradlive/service/datatable",
 		"columns" : [ {
 			"data" : "uid"
 		}, {
@@ -464,10 +464,6 @@ $(document).ready(function() {
 			"data" : "bike"
 		}, {
 			"data" : "number"
-		}, {
-			"data" : "lat"
-		}, {
-			"data" : "lng"
 		}, {
 			"data" : "timestamp"
 		} ]
