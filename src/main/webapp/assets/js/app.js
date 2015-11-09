@@ -316,7 +316,7 @@ var baseLayers = {
 
 var groupedOverlays = {
 	"Points of Interest" : {
-		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Denkmal (bis heute)" : allBikesLayer
+		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Fahrrad-Strecken" : allBikesLayer
 	},
 	"Reference" : {
 		"<img src='assets/img/wappen.gif' width='24' height='28'>&nbsp;Stadtteile" : boroughs
