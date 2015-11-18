@@ -84,7 +84,7 @@ var attr = '<h4>Attribution</h4><a href=\'https://github.com/bmcbride/bootleaf\'
 		+ '<a href=\'https://www.datatables.net\' target=\'_blank\'>DataTables</a>, '
 		+ '<a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank">leaflet marker cluster plugin</a>, '
 		+ '<a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>, '
-		+ 'Geocodierung <a href="http://wiki.openstreetmap.org/wiki/Nominatim" target="_blank">Nominatim</a>';
+		+ 'Powered by <a href="https://graphhopper.com/#directions-api">GraphHopper API</a>';
 var mapquestOSM = L.tileLayer(
 		"http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png", {
 			maxZoom : 18,
