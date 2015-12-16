@@ -84,21 +84,10 @@
 							class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Download <b
 							class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="data/Denkmalliste.csv"
-								download="data/Denkmalliste.csv" target="_blank"
+							<li><a href="/kvbradlive/service"
+								download="/kvbradlive/service" target="_blank"
 								data-toggle="collapse" data-target=".navbar-collapse.in"><i
-									class="fa fa-download"></i>&nbsp;&nbsp;alle Denkm&auml;ler
-									(csv)</a></li>
-							<li><a href="data/geo/Denkmalliste.csv"
-								download="data/geo/Denkmalliste.csv" target="_blank"
-								data-toggle="collapse" data-target=".navbar-collapse.in"><i
-									class="fa fa-download"></i>&nbsp;&nbsp;Denkm&auml;ler
-									georeferenziert (csv)</a></li>
-							<li><a href="data/nogeo/Denkmalliste.csv"
-								download="data/nogeo/Denkmalliste.csv" target="_blank"
-								data-toggle="collapse" data-target=".navbar-collapse.in"><i
-									class="fa fa-download"></i>&nbsp;&nbsp;Denkm&auml;ler nicht
-									georeferenziert (csv)</a></li>
+									class="fa fa-download"></i>&nbsp;&nbsp;alle Bike Informationen als JSON</a></li>
 						</ul></li>
 				</ul>
 			</div>
@@ -124,7 +113,7 @@
 				<div class="modal-header">
 					<button class="close" type="button" data-dismiss="modal"
 						aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Baudenkm&auml;ler in K&ouml;ln</h4>
+					<h4 class="modal-title">KVB Fahrr&auml;der in K&ouml;ln</h4>
 				</div>
 				<div class="modal-body">
 					<ul class="nav nav-tabs" id="aboutTabs">
@@ -137,8 +126,8 @@
 						<div class="tab-pane fade active in" id="about">
 							<p>
 								Diese Webseite zeigt auf Basis der <a
-									href="http://www.offenedaten-koeln.de/dataset/denkmalliste-stadt-koeln">Denkmalliste
-									Stadt Koeln</a> die Baudenkm&auml;ler der Stadt K&ouml;ln auf der Karte von Köln an. Diese werden durch das <a
+									href="http://www.offenedaten-koeln.de/dataset/standorte-fahrradverleih-koeln-kvb-rad" target="_blank">Standorte 
+									Fahrradverleih Koeln - KVB-Rad</a>. Diese werden durch das <a
 									href="http://www.offenedaten-koeln.de/" target="_blank">Offene
 									Daten Portal</a> der <a href="http://www.koeln.de" target="_blank">Stadt
 									Köln</a> zur Verfügung gestellt.
@@ -148,40 +137,14 @@
 								<ul class="list-group">
 									<li class="list-group-item">Anzeige der Informationen
 										sowohl im Desktop-Browser, als auch auf Tablet und Smartphone
-										durch Verwendung von<a
+										durch Verwendung von <a
 										href="https://github.com/bmcbride/bootleaf" target="_blank">Bootleaf</a>,
 										<a href="http://getbootstrap.com/" target="_blank">Bootstrap
 											3</a> und <a href="http://leafletjs.com/" target="_blank">Leaflet</a>.
 									</li>
-									<li class="list-group-item">Auswahl der Anzeige von
-										Baudenkmälern auf Basis der Angabe des Baujahrs.</li>
-									<li class="list-group-item">Geocodierung auf Basis von <a
-										href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a>
-										mit Hilfe von <a
-										href="http://wiki.openstreetmap.org/wiki/Nominatim"
-										target="_blank">Nominatim</a>
+									<li class="list-group-item">Routing wird mit Hilfe von <a
+										href="https://graphhopper.com/" target="_blank">Graphhopper</a> ermittelt.
 									</li>
-									<li class="list-group-item">GPS basierte Verortung, zur
-										Ermittlung des aktuellen Standortes mit <a
-										href="https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/"
-										target="_blank">Mapbox Leaflet Locate</a>
-									</li>
-									<li class="list-group-item">Anzeige von Baudenkmälern, die
-										nicht geocodiert werden konnten im Bereich Tools mit mit Hilfe
-										von <a href="https://www.datatables.net" target="_blank">DataTables</a>
-									</li>
-									<li class="list-group-item">Marker clustering von
-										Baudenkmälern bei höheren Zoomleveln zur Erhöhung der
-										Anzeigegeschwindigkeit mit <a
-										href="https://github.com/Leaflet/Leaflet.markercluster"
-										target="_blank">Leaflet marker cluster plugin</a>
-									</li>
-									<li class="list-group-item">Laden der Daten in den Browser
-										und Suche über Denkmal und Stadtteile mit <a
-										href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>
-									</li>
-									<li class="list-group-item">Download aufbereiteter
-										Informationen im csv-Format im Bereich Downloads</li>
 								</ul>
 							</div>
 						</div>
