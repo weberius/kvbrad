@@ -204,14 +204,21 @@ function onEachFeatureDenkmal(feature, layer) {
  * add/remove allBikes to markerClusters layer
  */
 var allBikesLayer = L.geoJson(null);
-var bikeLayer = L.geoJson(null);
-
 var allBikes = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
 	onEachFeature : onEachFeatureDenkmal
 });
 $.getJSON("/kvbradpositions/service", function(data) {
 	allBikes.addData(data);
+});
+
+var allRoutingLayer = L.geoJson(null);
+var allRouting = L.geoJson(null, {
+	pointToLayer : pointToLayerDenkmal,
+	onEachFeature : onEachFeatureDenkmal
+});
+$.getJSON("/kvbradrouting/service/geojson", function(data) {
+	allRouting.addData(data);
 });
 
 map = L.map("map", {
@@ -227,11 +234,17 @@ map.on("overlayadd", function(e) {
 	if (e.layer === allBikesLayer) {
 		markerClusters.addLayer(allBikes);
 	}
+	if (e.layer === allRoutingLayer) {
+		markerClusters.addLayer(allRouting);
+	}
 });
 
 map.on("overlayremove", function(e) {
 	if (e.layer === allBikesLayer) {
 		markerClusters.removeLayer(allBikes);
+	}
+	if (e.layer === allRoutingLayer) {
+		markerClusters.removeLayer(allRouting);
 	}
 });
 
@@ -260,7 +273,7 @@ var attributionControl = L.control({
 });
 attributionControl.onAdd = function(map) {
 	var div = L.DomUtil.create("div", "leaflet-control-attribution");
-	div.innerHTML = "<span class='hidden-xs'>Developed by <a href='https://github.com/weberius/denkmalinkoeln' target='_blank'>Wolfram Eberius</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
+	div.innerHTML = "<span class='hidden-xs'>Developed by <a href='https://github.com/codeforcologne/kvbrad' target='_blank'>Wolfram Eberius</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
 	return div;
 };
 map.addControl(attributionControl);
@@ -316,7 +329,8 @@ var baseLayers = {
 
 var groupedOverlays = {
 	"Points of Interest" : {
-		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Fahrrad-Strecken" : allBikesLayer
+		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Fahrrad-Strecken" : allBikesLayer,
+		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Routing-Strecken" : allRoutingLayer
 	},
 	"Reference" : {
 		"<img src='assets/img/wappen.gif' width='24' height='28'>&nbsp;Stadtteile" : boroughs
