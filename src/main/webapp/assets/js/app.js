@@ -150,13 +150,13 @@ function pointToLayerDenkmal(feature, latlng) {
 	});
 }
 
-function onEachFeatureDenkmal(feature, layer) {
+function onEachFeatureBike(feature, layer) {
 	if (feature.properties) {
 		var content = "<table class='table table-striped table-bordered table-condensed'>"
 				+ "<tr><th>Name</th><td>"
 				+ feature.properties.name
 				+ "</td></tr>"
-				+ "<tr><th>Nummber</th><td>"
+				+ "<tr><th>Number</th><td>"
 				+ feature.properties.number
 				+ "</td></tr>"
 				+ "<tr><th>Timestamps</th><td>"
@@ -199,6 +199,52 @@ function onEachFeatureDenkmal(feature, layer) {
 	}
 }
 
+function onEachFeatureRoute(feature, layer) {
+	if (feature.properties) {
+		var content = "<table class='table table-striped table-bordered table-condensed'>"
+				+ "<tr><th>Number</th><td>"
+				+ feature.properties.number
+				+ "</td></tr>"
+				+ "<tr><th>Entfernung (km)</th><td>"
+				+ feature.properties.distance
+				+ "</td></tr>"
+				+ "<tr><th>Zeit (mm:ss)</th><td>"
+				+ feature.properties.time
+				+ "</td></tr>" + "<table>";
+		layer.on({
+			click : function(e) {
+				$("#feature-title").html(feature.properties.kurzbezeichnung);
+				$("#feature-info").html(content);
+				$("#featureModal").modal("show");
+				highlight.clearLayers().addLayer(
+						L.circleMarker([ feature.geometry.coordinates[1],
+								feature.geometry.coordinates[0] ],
+								highlightStyle));
+			}
+		});
+		$("#feature-list tbody")
+				.append(
+						'<tr class="feature-row" id="'
+								+ L.stamp(layer)
+								+ '" lat="'
+								+ feature.geometry.coordinates[1]
+								+ '" lng="'
+								+ feature.geometry.coordinates[0]
+								+ '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/denkmal.png"></td><td class="feature-name">'
+								+ layer.feature.properties.kurzbezeichnung
+								+ '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+		allBikesearch.push({
+			name : layer.feature.properties.kurzbezeichnung,
+			address : layer.feature.properties.adresse,
+			baujahr : layer.feature.properties.baujahr,
+			source : "Denkmal",
+			id : L.stamp(layer),
+			lat : layer.feature.geometry.coordinates[1],
+			lng : layer.feature.geometry.coordinates[0]
+		});
+	}
+}
+
 /*
  * Empty layer placeholder to add to layer control for listening when to
  * add/remove allBikes to markerClusters layer
@@ -206,7 +252,7 @@ function onEachFeatureDenkmal(feature, layer) {
 var allBikesLayer = L.geoJson(null);
 var allBikes = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
-	onEachFeature : onEachFeatureDenkmal
+	onEachFeature : onEachFeatureBike
 });
 $.getJSON("/kvbradpositions/service", function(data) {
 	allBikes.addData(data);
@@ -215,7 +261,7 @@ $.getJSON("/kvbradpositions/service", function(data) {
 var allRoutingLayer = L.geoJson(null);
 var allRouting = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
-	onEachFeature : onEachFeatureDenkmal
+	onEachFeature : onEachFeatureRoute
 });
 $.getJSON("/kvbradrouting/service/geojson", function(data) {
 	allRouting.addData(data);
