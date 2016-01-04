@@ -267,6 +267,13 @@ $.getJSON("/kvbradrouting/service/geojson", function(data) {
 	allRouting.addData(data);
 });
 
+var allAnalysisLayer = L.geoJson(null);
+var allAnalysis = L.geoJson(null);
+$.getJSON("/kvbradanalysis/service/geojson", function(data) {
+	allAnalysis.addData(data);
+});
+
+
 map = L.map("map", {
 	zoom : 15,
 	center : [ 50.94135, 6.95819 ],
@@ -283,6 +290,9 @@ map.on("overlayadd", function(e) {
 	if (e.layer === allRoutingLayer) {
 		markerClusters.addLayer(allRouting);
 	}
+	if (e.layer === allAnalysisLayer) {
+		markerClusters.addLayer(allAnalysis);
+	}
 });
 
 map.on("overlayremove", function(e) {
@@ -291,6 +301,9 @@ map.on("overlayremove", function(e) {
 	}
 	if (e.layer === allRoutingLayer) {
 		markerClusters.removeLayer(allRouting);
+	}
+	if (e.layer === allAnalysisLayer) {
+		markerClusters.removeLayer(allAnalysis);
 	}
 });
 
@@ -376,7 +389,8 @@ var baseLayers = {
 var groupedOverlays = {
 	"Points of Interest" : {
 		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Fahrrad-Strecken" : allBikesLayer,
-		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Routing-Strecken" : allRoutingLayer
+		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Routing-Strecken" : allRoutingLayer,
+		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;analysierte Strecken" : allAnalysisLayer
 	},
 	"Reference" : {
 		"<img src='assets/img/wappen.gif' width='24' height='28'>&nbsp;Stadtteile" : boroughs
