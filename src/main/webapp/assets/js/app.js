@@ -254,18 +254,18 @@ var allBikes = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
 	onEachFeature : onEachFeatureBike
 });
-//$.getJSON("/kvbradpositions/service", function(data) {
-//	allBikes.addData(data);
-//});
+$.getJSON("/kvbradpositions/service/geojson", function(data) {
+	allBikes.addData(data);
+});
 
 var allRoutingLayer = L.geoJson(null);
 var allRouting = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
 	onEachFeature : onEachFeatureRoute
 });
-//$.getJSON("/kvbradrouting/service/geojson", function(data) {
-//	allRouting.addData(data);
-//});
+$.getJSON("/kvbradrouting/service/geojson", function(data) {
+	allRouting.addData(data);
+});
 
 var allAnalysisLayer = L.geoJson(null);
 var allAnalysis = L.geoJson(null, {
