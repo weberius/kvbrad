@@ -254,23 +254,53 @@ var allBikes = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
 	onEachFeature : onEachFeatureBike
 });
-$.getJSON("/kvbradpositions/service", function(data) {
-	allBikes.addData(data);
-});
+//$.getJSON("/kvbradpositions/service", function(data) {
+//	allBikes.addData(data);
+//});
 
 var allRoutingLayer = L.geoJson(null);
 var allRouting = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
 	onEachFeature : onEachFeatureRoute
 });
-$.getJSON("/kvbradrouting/service/geojson", function(data) {
-	allRouting.addData(data);
-});
+//$.getJSON("/kvbradrouting/service/geojson", function(data) {
+//	allRouting.addData(data);
+//});
 
 var allAnalysisLayer = L.geoJson(null);
-var allAnalysis = L.geoJson(null);
+var allAnalysis = L.geoJson(null, {
+	style : function (feature) {
+		  if(feature.properties.index < 0.25) {
+			    return {
+			    	color :"#a6d96a",
+			    	"opacity": 1.0
+			    };
+		  } else if (feature.properties.index < 0.375) {
+			    return {
+			    	color :"#ffffbf",
+			    	"opacity": 1.0
+			    };
+		  } else if (feature.properties.index < 0.5) {
+			    return {
+			    	color :"#fdae61",
+			    	"opacity": 1.0
+			    };
+		  } else {
+			    return {
+			    	color :"#d7191c",
+			    	"opacity": 1.0
+			    };
+		  }
+	}
+});
+
 $.getJSON("/kvbradanalysis/service/geojson", function(data) {
 	allAnalysis.addData(data);
+	allAnalysis.eachLayer(function (layer) {
+	  if(layer.feature.properties.index > 0.8) {    
+	    layer.setStyle({fillColor :'#d7191c'}) 
+	  }
+	});
 });
 
 
