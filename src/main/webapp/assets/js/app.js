@@ -254,7 +254,7 @@ var allBikes = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
 	onEachFeature : onEachFeatureBike
 });
-$.getJSON("/kvbradpositions/service/geojson", function(data) {
+$.getJSON("/kvbradpositions/service/geojson/1", function(data) {
 	allBikes.addData(data);
 });
 
@@ -263,7 +263,7 @@ var allRouting = L.geoJson(null, {
 	pointToLayer : pointToLayerDenkmal,
 	onEachFeature : onEachFeatureRoute
 });
-$.getJSON("/kvbradrouting/service/geojson", function(data) {
+$.getJSON("/kvbradrouting/service/geojson/1", function(data) {
 	allRouting.addData(data);
 });
 
