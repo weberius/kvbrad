@@ -1,4 +1,4 @@
-var map, featureList, boroughSearch = [], allBikesearch = [];
+var map, featureList, allBikesearch = [];
 
 $(window).resize(function() {
 	sizeLayerControl();
@@ -27,7 +27,7 @@ $("#about-btn").click(function() {
 });
 
 $("#full-extent-btn").click(function() {
-	map.fitBounds(boroughs.getBounds());
+	map.fitBounds(allAnalysis.getBounds());
 	$(".navbar-collapse.in").collapse("hide");
 	return false;
 });
@@ -85,12 +85,17 @@ var attr = '<h4>Attribution</h4><a href=\'https://github.com/bmcbride/bootleaf\'
 		+ '<a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank">leaflet marker cluster plugin</a>, '
 		+ '<a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>, '
 		+ 'Powered by <a href="https://graphhopper.com/#directions-api">GraphHopper API</a>';
-var mapquestOSM = L.tileLayer(
-		"http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png", {
-			maxZoom : 18,
-			subdomains : [ "otile1", "otile2", "otile3", "otile4" ],
-			attribution : attr
-		});
+var mapquestOSM = 
+	L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+    	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+	
+//	L.tileLayer(
+//		"http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png", {
+//			maxZoom : 18,
+//			subdomains : [ "otile1", "otile2", "otile3", "otile4" ],
+//			attribution : attr
+//		});
 
 /* Overlay Layers */
 var highlight = L.geoJson(null);
@@ -100,32 +105,6 @@ var highlightStyle = {
 	fillOpacity : 0.0,
 	radius : 20
 };
-
-var boroughs = L.geoJson(null, {
-	style : function(feature) {
-		return {
-			fillColor : '#000000',
-			fillOpacity : 0.2,
-			color : '#ffffff',
-			dashArray : '3',
-			fill : true,
-			opacity : 1,
-			clickable : false,
-			weight : 3
-		};
-	},
-	onEachFeature : function(feature, layer) {
-		boroughSearch.push({
-			name : layer.feature.properties.name,
-			source : "Stadtteile",
-			id : L.stamp(layer),
-			bounds : layer.getBounds()
-		});
-	}
-});
-$.getJSON("data/stadtteile_100.json", function(data) {
-	boroughs.addData(data);
-});
 
 /* Single marker cluster layer to hold all clusters */
 var markerClusters = new L.MarkerClusterGroup({
@@ -245,52 +224,13 @@ function onEachFeatureRoute(feature, layer) {
 	}
 }
 
-/*
- * Empty layer placeholder to add to layer control for listening when to
- * add/remove allBikes to markerClusters layer
- */
-var allBikesLayer = L.geoJson(null);
-var allBikes = L.geoJson(null, {
-	pointToLayer : pointToLayerDenkmal,
-	onEachFeature : onEachFeatureBike
-});
-$.getJSON("/kvbradpositions/service/geojson/1", function(data) {
-	allBikes.addData(data);
-});
-
-var allRoutingLayer = L.geoJson(null);
-var allRouting = L.geoJson(null, {
-	pointToLayer : pointToLayerDenkmal,
-	onEachFeature : onEachFeatureRoute
-});
-$.getJSON("/kvbradrouting/service/geojson/1", function(data) {
-	allRouting.addData(data);
-});
-
 var allAnalysisLayer = L.geoJson(null);
 var allAnalysis = L.geoJson(null, {
 	style : function (feature) {
-		  if(feature.properties.index < 0.25) {
-			    return {
-			    	color :"#a6d96a",
-			    	"opacity": 1.0
-			    };
-		  } else if (feature.properties.index < 0.375) {
-			    return {
-			    	color :"#ffffbf",
-			    	"opacity": 1.0
-			    };
-		  } else if (feature.properties.index < 0.5) {
-			    return {
-			    	color :"#fdae61",
-			    	"opacity": 1.0
-			    };
-		  } else {
-			    return {
-			    	color :"#d7191c",
-			    	"opacity": 1.0
-			    };
-		  }
+		return {
+	    	color :feature.properties.color,
+	    	"opacity": 1.0
+		};
 	}
 });
 
@@ -301,37 +241,26 @@ $.getJSON("/kvbradanalysis/service/geojson", function(data) {
 	    layer.setStyle({fillColor :'#d7191c'}) 
 	  }
 	});
+	map.addLayer(allAnalysis);
 });
 
 
 map = L.map("map", {
 	zoom : 15,
 	center : [ 50.94135, 6.95819 ],
-	layers : [ mapquestOSM, boroughs, markerClusters, highlight ],
+	layers : [ mapquestOSM, markerClusters, highlight ],
 	zoomControl : false,
 	attributionControl : false
 });
 
 /* Layer control listeners that allow for a single markerClusters layer */
 map.on("overlayadd", function(e) {
-	if (e.layer === allBikesLayer) {
-		markerClusters.addLayer(allBikes);
-	}
-	if (e.layer === allRoutingLayer) {
-		markerClusters.addLayer(allRouting);
-	}
 	if (e.layer === allAnalysisLayer) {
 		markerClusters.addLayer(allAnalysis);
 	}
 });
 
 map.on("overlayremove", function(e) {
-	if (e.layer === allBikesLayer) {
-		markerClusters.removeLayer(allBikes);
-	}
-	if (e.layer === allRoutingLayer) {
-		markerClusters.removeLayer(allRouting);
-	}
 	if (e.layer === allAnalysisLayer) {
 		markerClusters.removeLayer(allAnalysis);
 	}
@@ -416,20 +345,6 @@ var baseLayers = {
 	"Street Map" : mapquestOSM
 };
 
-var groupedOverlays = {
-	"Points of Interest" : {
-		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Fahrrad-Strecken" : allBikesLayer,
-		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;Routing-Strecken" : allRoutingLayer,
-		"<img src='assets/img/logo_kvb_37.png' width='30' height='30'>&nbsp;analysierte Strecken" : allAnalysisLayer
-	},
-	"Reference" : {
-		"<img src='assets/img/wappen.gif' width='24' height='28'>&nbsp;Stadtteile" : boroughs
-	}
-};
-
-var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
-	collapsed : isCollapsed
-}).addTo(map);
 
 /* Highlight search box text on click */
 $("#searchbox").click(function() {
@@ -454,22 +369,10 @@ $(document)
 				function() {
 					$("#loading").hide();
 					sizeLayerControl();
-					// Fit map to boroughs bounds
-					// map.fitBounds(boroughs.getBounds());
 					featureList = new List("features", {
 						valueNames : [ "feature-name" ]
 					});
 					// featureList.sort("feature-name", {order:"asc"});
-
-					var boroughsBH = new Bloodhound({
-						name : "Stadtteile",
-						datumTokenizer : function(d) {
-							return Bloodhound.tokenizers.whitespace(d.name);
-						},
-						queryTokenizer : Bloodhound.tokenizers.whitespace,
-						local : boroughSearch,
-						limit : 10
-					});
 
 					var allBikesBH = new Bloodhound({
 						name : "Denkmal",
@@ -481,7 +384,6 @@ $(document)
 						limit : 10
 					});
 
-					boroughsBH.initialize();
 					allBikesBH.initialize();
 
 					// instantiate the typeahead UI
@@ -491,14 +393,6 @@ $(document)
 										minLength : 3,
 										highlight : true,
 										hint : false
-									},
-									{
-										name : "Stadtteile",
-										displayKey : "name",
-										source : boroughsBH.ttAdapter(),
-										templates : {
-											header : "<h4 class='typeahead-header'><img src='assets/img/wappen.gif' width='24' height='28'>&nbsp;Stadtteile</h4>"
-										}
 									},
 									{
 										name : "Denkmal",
@@ -514,15 +408,6 @@ $(document)
 							.on("typeahead:selected", function(obj, datum) {
 								if (datum.source === "Stadtteile") {
 									map.fitBounds(datum.bounds);
-								}
-								if (datum.source === "Denkmal") {
-									if (!map.hasLayer(allBikesLayer)) {
-										map.addLayer(allBikesLayer);
-									}
-									map.setView([ datum.lat, datum.lng ], 18);
-									if (map._layers[datum.id]) {
-										map._layers[datum.id].fire("click");
-									}
 								}
 								if ($(".navbar-collapse").height() > 50) {
 									$(".navbar-collapse").collapse("hide");
