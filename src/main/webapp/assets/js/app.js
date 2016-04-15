@@ -244,6 +244,44 @@ $.getJSON("/kvbradanalysis/service/geojson", function(data) {
 	map.addLayer(allAnalysis);
 });
 
+var allbikeslatestpositionLayer = L.geoJson(null);
+var allbikeslatestposition = L.geoJson(null, {
+	  pointToLayer: function (feature, latlng) {
+	    return L.marker(latlng, {
+	      icon: L.icon({
+	        iconUrl: "assets/img/logo_kvb_37.png",
+	        iconSize: [12, 12],
+	        iconAnchor: [12, 28],
+	        popupAnchor: [0, -25]
+	      }),
+	      title: feature.properties.NAME,
+	      riseOnHover: true
+	    });
+	  },
+	  onEachFeature: function (feature, layer) {
+	    if (feature.properties) {
+	      var content = "<table class='table table-striped table-bordered table-condensed'>" 
+	    	  + "<tr><th>Nummer</th><td>" + feature.properties.number + "</td></tr>" 
+	    	  + "<tr><th>Name</th><td>" + feature.properties.name + "</td></tr>" 
+	    	  + "<tr><th>Zeitpunkt</th><td>" + feature.properties.timestamp + "</td></tr>" 
+	    	  + "<table>";
+	      layer.on({
+	        click: function (e) {
+	          $("#feature-title").html(feature.properties.NAME);
+	          $("#feature-info").html(content);
+	          $("#featureModal").modal("show");
+	          highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
+	        }
+	      });
+	      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/museum.png"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+	    }
+	  }
+});
+$.getJSON("/kvbradpositions/service/allbikeslatestposition?geojson", function(data) {
+	allbikeslatestposition.addData(data);
+	map.addLayer(allbikeslatestposition);
+});
+
 
 map = L.map("map", {
 	zoom : 15,
