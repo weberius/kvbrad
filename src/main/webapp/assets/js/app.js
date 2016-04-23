@@ -472,28 +472,26 @@ $(document)
 				});
 
 // Leaflet patch to make layer control scrollable on touch browsers
-var container = $(".leaflet-control-layers")[0];
-if (!L.Browser.touch) {
-	L.DomEvent.disableClickPropagation(container).disableScrollPropagation(
-			container);
-} else {
-	L.DomEvent.disableClickPropagation(container);
-}
+//var container = $(".leaflet-control-layers")[0];
+//if (!L.Browser.touch) {
+//	L.DomEvent.disableClickPropagation(container).disableScrollPropagation(
+//			container);
+//} else {
+//	L.DomEvent.disableClickPropagation(container);
+//}
 
 // datatable
 $(document).ready(function() {
 	$('#bikes').DataTable({
-		"ajax" : "/kvbradlive/service/datatable",
+		"ajax" : "/kvbradpositions/service/allbikeslatestposition?datatables",
 		"columns" : [ {
-			"data" : "uid"
+			"data" : "number"
 		}, {
 			"data" : "name"
 		}, {
-			"data" : "bike"
-		}, {
-			"data" : "number"
-		}, {
 			"data" : "timestamp"
+		}, {
+			"data" : "bike"
 		} ]
 	});
 });
