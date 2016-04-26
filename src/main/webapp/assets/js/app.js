@@ -114,21 +114,6 @@ var markerClusters = new L.MarkerClusterGroup({
 	disableClusteringAtZoom : 18
 });
 
-function pointToLayerDenkmal(feature, latlng) {
-	return L.marker(latlng, {
-		icon : L.icon({
-			iconUrl : "assets/img/denkmal.png",
-			iconSize : [ 24, 28 ],
-			iconAnchor : [ 12, 28 ],
-			popupAnchor : [ 0, -25 ]
-		}),
-		title : feature.properties.adresse + ", "
-				+ feature.properties.kurzbezeichnung + ", Bj. "
-				+ feature.properties.baujahr,
-		riseOnHover : true
-	});
-}
-
 function onEachFeatureBike(feature, layer) {
 	if (feature.properties) {
 		var content = "<table class='table table-striped table-bordered table-condensed'>"
@@ -139,14 +124,14 @@ function onEachFeatureBike(feature, layer) {
 				+ feature.properties.number
 				+ "</td></tr>"
 				+ "<tr><th>Timestamps</th><td>"
-				+ feature.properties.timestamps
+				+ feature.properties.timestamp
 				+ "</td></tr>"
 				+ "<tr><th>Coordinates</th><td>"
-				+ feature.properties.coordinates
+				+ feature.geometry.coordinates
 				+ "</td></tr>" + "<table>";
 		layer.on({
 			click : function(e) {
-				$("#feature-title").html(feature.properties.kurzbezeichnung);
+				$("#feature-title").html(feature.properties.number);
 				$("#feature-info").html(content);
 				$("#featureModal").modal("show");
 				highlight.clearLayers().addLayer(
@@ -167,56 +152,9 @@ function onEachFeatureBike(feature, layer) {
 								+ layer.feature.properties.kurzbezeichnung
 								+ '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
 		allBikesearch.push({
-			name : layer.feature.properties.kurzbezeichnung,
-			address : layer.feature.properties.adresse,
-			baujahr : layer.feature.properties.baujahr,
-			source : "Denkmal",
-			id : L.stamp(layer),
-			lat : layer.feature.geometry.coordinates[1],
-			lng : layer.feature.geometry.coordinates[0]
-		});
-	}
-}
-
-function onEachFeatureRoute(feature, layer) {
-	if (feature.properties) {
-		var content = "<table class='table table-striped table-bordered table-condensed'>"
-				+ "<tr><th>Number</th><td>"
-				+ feature.properties.number
-				+ "</td></tr>"
-				+ "<tr><th>Entfernung (km)</th><td>"
-				+ feature.properties.distance
-				+ "</td></tr>"
-				+ "<tr><th>Zeit (mm:ss)</th><td>"
-				+ feature.properties.time
-				+ "</td></tr>" + "<table>";
-		layer.on({
-			click : function(e) {
-				$("#feature-title").html(feature.properties.kurzbezeichnung);
-				$("#feature-info").html(content);
-				$("#featureModal").modal("show");
-				highlight.clearLayers().addLayer(
-						L.circleMarker([ feature.geometry.coordinates[1],
-								feature.geometry.coordinates[0] ],
-								highlightStyle));
-			}
-		});
-		$("#feature-list tbody")
-				.append(
-						'<tr class="feature-row" id="'
-								+ L.stamp(layer)
-								+ '" lat="'
-								+ feature.geometry.coordinates[1]
-								+ '" lng="'
-								+ feature.geometry.coordinates[0]
-								+ '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/denkmal.png"></td><td class="feature-name">'
-								+ layer.feature.properties.kurzbezeichnung
-								+ '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
-		allBikesearch.push({
-			name : layer.feature.properties.kurzbezeichnung,
-			address : layer.feature.properties.adresse,
-			baujahr : layer.feature.properties.baujahr,
-			source : "Denkmal",
+			number : layer.feature.properties.number,
+			timestamp : layer.feature.properties.timestamp,
+			source : "Bikes",
 			id : L.stamp(layer),
 			lat : layer.feature.geometry.coordinates[1],
 			lng : layer.feature.geometry.coordinates[0]
@@ -233,7 +171,6 @@ var allAnalysis = L.geoJson(null, {
 		};
 	}
 });
-
 $.getJSON("/kvbradanalysis/service/geojson", function(data) {
 	allAnalysis.addData(data);
 	allAnalysis.eachLayer(function (layer) {
@@ -258,24 +195,7 @@ var allbikeslatestposition = L.geoJson(null, {
 	      riseOnHover: true
 	    });
 	  },
-	  onEachFeature: function (feature, layer) {
-	    if (feature.properties) {
-	      var content = "<table class='table table-striped table-bordered table-condensed'>" 
-	    	  + "<tr><th>Nummer</th><td>" + feature.properties.number + "</td></tr>" 
-	    	  + "<tr><th>Name</th><td>" + feature.properties.name + "</td></tr>" 
-	    	  + "<tr><th>Zeitpunkt</th><td>" + feature.properties.timestamp + "</td></tr>" 
-	    	  + "<table>";
-	      layer.on({
-	        click: function (e) {
-	          $("#feature-title").html(feature.properties.NAME);
-	          $("#feature-info").html(content);
-	          $("#featureModal").modal("show");
-	          highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
-	        }
-	      });
-	      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/museum.png"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
-	    }
-	  }
+	  onEachFeature: onEachFeatureBike
 });
 $.getJSON("/kvbradpositions/service/allbikeslatestposition?geojson", function(data) {
 	allbikeslatestposition.addData(data);
@@ -413,9 +333,9 @@ $(document)
 					// featureList.sort("feature-name", {order:"asc"});
 
 					var allBikesBH = new Bloodhound({
-						name : "Denkmal",
+						name : "Bikes",
 						datumTokenizer : function(d) {
-							return Bloodhound.tokenizers.whitespace(d.address);
+							return Bloodhound.tokenizers.whitespace(d.number);
 						},
 						queryTokenizer : Bloodhound.tokenizers.whitespace,
 						local : allBikesearch,
@@ -426,44 +346,30 @@ $(document)
 
 					// instantiate the typeahead UI
 					$("#searchbox")
-							.typeahead(
-									{
+							.typeahead({
 										minLength : 3,
 										highlight : true,
 										hint : false
-									},
-									{
-										name : "Denkmal",
-										displayKey : "address",
+									}, {
+										name : "Bikes",
+										displayKey : "number",
 										source : allBikesBH.ttAdapter(),
 										templates : {
-											header : "<h4 class='typeahead-header'><img src='assets/img/denkmal.png' width='24' height='28'>&nbsp;Denkmal</h4>",
-											suggestion : Handlebars
-													.compile([ "<small>{{address}}</small></br><small><i>{{name}}&nbsp;(Bj. {{baujahr}})</i></small>" ]
-															.join(""))
+											header : "<h4 class='typeahead-header'><img src='assets/img/logo_kvb_37.png' width='24' height='28'>&nbsp;Bikes</h4>",
+											suggestion : Handlebars.compile([ "<small>{{number}}</small></br><i>{{timestamp}}</i></small>" ].join(""))
 										}
 									})
 							.on("typeahead:selected", function(obj, datum) {
-								if (datum.source === "Stadtteile") {
+								if (datum.source === "Bikes") {
 									map.fitBounds(datum.bounds);
 								}
 								if ($(".navbar-collapse").height() > 50) {
 									$(".navbar-collapse").collapse("hide");
 								}
-							}).on(
-									"typeahead:opened",
-									function() {
-										$(".navbar-collapse.in").css(
-												"max-height",
-												$(document).height()
-														- $(".navbar-header")
-																.height());
-										$(".navbar-collapse.in").css(
-												"height",
-												$(document).height()
-														- $(".navbar-header")
-																.height());
-									}).on("typeahead:closed", function() {
+							}).on("typeahead:opened", function() {
+								$(".navbar-collapse.in").css("max-height", $(document).height() - $(".navbar-header").height());
+								$(".navbar-collapse.in").css("height", $(document).height() - $(".navbar-header").height());
+							}).on("typeahead:closed", function() {
 								$(".navbar-collapse.in").css("max-height", "");
 								$(".navbar-collapse.in").css("height", "");
 							});
