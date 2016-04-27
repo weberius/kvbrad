@@ -360,8 +360,12 @@ $(document)
 										}
 									})
 							.on("typeahead:selected", function(obj, datum) {
-								if (datum.source === "Bikes") {
-									map.fitBounds(datum.bounds);
+								map.setView([ datum.lat, datum.lng ], 18);
+								if (!map.hasLayer(allbikeslatestposition)) {
+									map.addLayer(allbikeslatestposition);
+								}
+								if (map._layers[datum.id]) {
+									map._layers[datum.id].fire("click");
 								}
 								if ($(".navbar-collapse").height() > 50) {
 									$(".navbar-collapse").collapse("hide");
