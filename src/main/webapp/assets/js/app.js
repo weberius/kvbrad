@@ -171,7 +171,7 @@ var allAnalysis = L.geoJson(null, {
 		};
 	}
 });
-$.getJSON("/kvbradanalysis/service/geojson", function(data) {
+$.getJSON("/kvbradanalysis/service/data?geojson", function(data) {
 	allAnalysis.addData(data);
 	allAnalysis.eachLayer(function (layer) {
 	  if(layer.feature.properties.index > 0.8) {    
