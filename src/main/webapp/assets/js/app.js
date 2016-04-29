@@ -401,7 +401,11 @@ $(document).ready(function() {
 		}, {
 			"data" : "timestamp"
 		}, {
-			"data" : "bike"
+			"data" : "time"
+		}, {
+			"data" : "distance"
+		}, {
+			"data" : "count"
 		} ]
 	});
 });
