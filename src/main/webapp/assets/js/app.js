@@ -126,6 +126,9 @@ function onEachFeatureBike(feature, layer) {
 				+ "<tr><th>Timestamps</th><td>"
 				+ feature.properties.timestamp
 				+ "</td></tr>"
+				+ "<tr><th>letzte Nutzung</th><td>"
+				+ (feature.properties.unused * -1) + " (Tage)"
+				+ "</td></tr>"
 				+ "<tr><th>Coordinates</th><td>"
 				+ feature.geometry.coordinates
 				+ "</td></tr>" + "<table>";
@@ -181,21 +184,33 @@ $.getJSON("/kvbradanalysis/service/data?geojson", function(data) {
 	map.addLayer(allAnalysis);
 });
 
+function pointToLayer(feature, latlng) {
+
+    var fillColor = '';
+    if (feature.properties.unused > -2) {
+        fillColor = '#1a9641';
+    } else if (feature.properties.unused > -4) {
+    	fillColor = '#fdae61';
+    } else if (feature.properties.unused > -7) {
+    	fillColor = '#d7191c';
+    } else {
+    	fillColor = '#777777';
+    }
+
+    return L.circleMarker(latlng, {
+        radius : 10,
+        fillColor : fillColor,
+        color : '#000',
+        weight : 1,
+        opacity : 0.5,
+        fillOpacity : 0.5
+    });
+}
+
 var allbikeslatestpositionLayer = L.geoJson(null);
 var allbikeslatestposition = L.geoJson(null, {
-	  pointToLayer: function (feature, latlng) {
-	    return L.marker(latlng, {
-	      icon: L.icon({
-	        iconUrl: "assets/img/logo_kvb_37.png",
-	        iconSize: [12, 12],
-	        iconAnchor: [12, 28],
-	        popupAnchor: [0, -25]
-	      }),
-	      title: feature.properties.NAME,
-	      riseOnHover: true
-	    });
-	  },
-	  onEachFeature: onEachFeatureBike
+    pointToLayer: pointToLayer,
+    onEachFeature: onEachFeatureBike
 });
 $.getJSON("/kvbradpositions/service/allbikeslatestposition?geojson", function(data) {
 	allbikeslatestposition.addData(data);
