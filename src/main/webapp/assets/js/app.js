@@ -498,10 +498,10 @@ var groupedOverlays = {
 	    "alle": allAnalysisLayer
 	 },
 	"Zuletzt verwendet": {
-    "&nbsp;Gestern oder heute": bike2Layer,
-    "&nbsp;&lt; 4 Tage": bike4Layer,
-    "&nbsp;&lt; 7 Tage": bike7Layer,
-    "&nbsp;länger": bike100Layer
+    "<img src='assets/img/1a9641.gif' width='16' height='16'>&nbsp;Gestern oder heute": bike2Layer,
+    "<img src='assets/img/fdae61.gif' width='16' height='16'>&nbsp;&lt; 4 Tage": bike4Layer,
+    "<img src='assets/img/d7191c.gif' width='16' height='16'>&nbsp;&lt; 7 Tage": bike7Layer,
+    "<img src='assets/img/777777.gif' width='16' height='16'>&nbsp;länger": bike100Layer
   }
 };
 
