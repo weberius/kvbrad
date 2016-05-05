@@ -64,21 +64,13 @@
 					<li><a href="#" data-toggle="collapse"
 						data-target=".navbar-collapse.in" id="about-btn"><i
 							class="fa fa-question-circle white"></i>&nbsp;&nbsp;About</a></li>
-					<li class="dropdown"><a id="toolsDrop" href="#" role="button"
-						class="dropdown-toggle" data-toggle="dropdown"><i
-							class="fa fa-globe white"></i>&nbsp;&nbsp;Tools <b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="#" data-toggle="collapse"
-								data-target=".navbar-collapse.in" id="full-extent-btn"><i
-									class="fa fa-arrows-alt"></i>&nbsp;&nbsp;Überblick Köln</a></li>
-							<li><a href="#" data-toggle="collapse"
-								data-target=".navbar-collapse.in" id="legend-btn"><i
-									class="fa fa-picture-o"></i>&nbsp;&nbsp;Liste der Fahrraddaten</a></li>
-							<!-- 
-                <li class="divider hidden-xs"></li>
-                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn"><i class="fa fa-user"></i>&nbsp;&nbsp;Login</a></li>
-                 -->
-						</ul></li>
+
+					<li><a href="#" data-toggle="collapse"
+						data-target=".navbar-collapse.in" id="full-extent-btn"><i
+							class="fa fa-arrows-alt"></i>&nbsp;&nbsp;Überblick Köln</a></li>
+					<li><a href="#" data-toggle="collapse"
+						data-target=".navbar-collapse.in" id="legend-btn"><i
+							class="fa fa-picture-o"></i>&nbsp;&nbsp;Liste der Fahrraddaten</a></li>
 					<li class="dropdown"><a class="dropdown-toggle"
 						id="downloadDrop" href="#" role="button" data-toggle="dropdown"><i
 							class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Download <b
@@ -87,11 +79,13 @@
 							<li><a href="/kvbradlive/service"
 								download="/kvbradlive/service" target="_blank"
 								data-toggle="collapse" data-target=".navbar-collapse.in"><i
-									class="fa fa-download"></i>&nbsp;&nbsp;alle Bike Informationen als JSON</a></li>
+									class="fa fa-download"></i>&nbsp;&nbsp;alle Bike Informationen
+									als JSON</a></li>
 							<li><a href="/kvbradrouting/service/json"
 								download="/kvbradrouting/service/json" target="_blank"
 								data-toggle="collapse" data-target=".navbar-collapse.in"><i
-									class="fa fa-download"></i>&nbsp;&nbsp;Routing-Ergebnisse als JSON</a></li>
+									class="fa fa-download"></i>&nbsp;&nbsp;Routing-Ergebnisse als
+									JSON</a></li>
 						</ul></li>
 				</ul>
 			</div>
@@ -100,6 +94,9 @@
 	</div>
 
 	<div id="container">
+		<div id="progress">
+			<div id="progress-bar"></div>
+		</div>
 		<div id="map"></div>
 	</div>
 
@@ -130,8 +127,9 @@
 						<div class="tab-pane fade active in" id="about">
 							<p>
 								Diese Webseite zeigt auf Basis der <a
-									href="http://www.offenedaten-koeln.de/dataset/standorte-fahrradverleih-koeln-kvb-rad" target="_blank">Standorte 
-									Fahrradverleih Koeln - KVB-Rad</a>. Diese werden durch das <a
+									href="http://www.offenedaten-koeln.de/dataset/standorte-fahrradverleih-koeln-kvb-rad"
+									target="_blank">Standorte Fahrradverleih Koeln - KVB-Rad</a>.
+								Diese werden durch das <a
 									href="http://www.offenedaten-koeln.de/" target="_blank">Offene
 									Daten Portal</a> der <a href="http://www.koeln.de" target="_blank">Stadt
 									Köln</a> zur Verfügung gestellt.
@@ -147,7 +145,8 @@
 											3</a> und <a href="http://leafletjs.com/" target="_blank">Leaflet</a>.
 									</li>
 									<li class="list-group-item">Routing wird mit Hilfe von <a
-										href="https://graphhopper.com/" target="_blank">Graphhopper</a> ermittelt.
+										href="https://graphhopper.com/" target="_blank">Graphhopper</a>
+										ermittelt.
 									</li>
 								</ul>
 							</div>

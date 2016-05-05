@@ -27,7 +27,7 @@ $("#about-btn").click(function() {
 });
 
 $("#full-extent-btn").click(function() {
-	map.fitBounds(allAnalysis.getBounds());
+	map.fitBounds(allAnalysisLayer.getBounds());
 	$(".navbar-collapse.in").collapse("hide");
 	return false;
 });
@@ -106,16 +106,39 @@ var highlightStyle = {
 	radius : 20
 };
 
-/* Single marker cluster layer to hold all clusters */
+var progress = document.getElementById('progress');
+var progressBar = document.getElementById('progress-bar');
+
+function updateProgressBar(processed, total, elapsed, layersArray) {
+    if (elapsed > 10) {
+        // if it takes more than a second to load, display the progress bar:
+        progress.style.display = 'block';
+        progressBar.style.width = Math.round(processed/total*100) + '%';
+    }
+
+    if (processed === total) {
+        // all markers processed - hide the progress bar:
+        progress.style.display = 'none';
+    }
+}
+
 var markerClusters = new L.MarkerClusterGroup({
-	spiderfyOnMaxZoom : true,
-	showCoverageOnHover : false,
-	zoomToBoundsOnClick : true,
-	disableClusteringAtZoom : 18
+    chunkedLoading: true,
+    chunkProgress: updateProgressBar,
+    disableClusteringAtZoom : 15,
+    showCoverageOnHover : false
 });
 
 function onEachFeatureBike(feature, layer) {
 	if (feature.properties) {
+		var unused = "";
+		if ((feature.properties.unused * -1) == 0) {
+			unused = "heute oder gestern";
+		} else if ((feature.properties.unused * -1) == 1) {
+			unused = "gestern oder vorgestern";
+		} else {
+			unused = "vor " + ((feature.properties.unused * -1) + 1) + " Tagen";
+		}
 		var content = "<table class='table table-striped table-bordered table-condensed'>"
 				+ "<tr><th>Name</th><td>"
 				+ feature.properties.name
@@ -127,7 +150,7 @@ function onEachFeatureBike(feature, layer) {
 				+ feature.properties.timestamp
 				+ "</td></tr>"
 				+ "<tr><th>letzte Nutzung</th><td>"
-				+ (feature.properties.unused * -1) + " (Tage)"
+				+ unused
 				+ "</td></tr>"
 				+ "<tr><th>Coordinates</th><td>"
 				+ feature.geometry.coordinates
@@ -165,8 +188,7 @@ function onEachFeatureBike(feature, layer) {
 	}
 }
 
-var allAnalysisLayer = L.geoJson(null);
-var allAnalysis = L.geoJson(null, {
+var allAnalysisLayer = L.geoJson(null, {
 	style : function (feature) {
 		return {
 	    	color :feature.properties.color,
@@ -175,13 +197,8 @@ var allAnalysis = L.geoJson(null, {
 	}
 });
 $.getJSON("/kvbradanalysis/service/data?geojson", function(data) {
-	allAnalysis.addData(data);
-	allAnalysis.eachLayer(function (layer) {
-	  if(layer.feature.properties.index > 0.8) {    
-	    layer.setStyle({fillColor :'#d7191c'}) 
-	  }
-	});
-	map.addLayer(allAnalysis);
+	allAnalysisLayer.addData(data);
+	map.addLayer(allAnalysisLayer);
 });
 
 function pointToLayer(feature, latlng) {
@@ -207,14 +224,68 @@ function pointToLayer(feature, latlng) {
     });
 }
 
+function getBikes(unused) {
+    return L.geoJson(null, {
+        filter : function(feature, latlng) {
+            return feature.properties.unused > unused;
+        },
+        pointToLayer : pointToLayer,
+        onEachFeature : onEachFeatureBike
+    });
+}
+
+var bike2 = L.geoJson(null, {
+    filter : function(feature, latlng) {
+        return feature.properties.unused > -2;
+    },
+    pointToLayer : pointToLayer,
+    onEachFeature : onEachFeatureBike
+});
+var bike2Layer = L.geoJson(null);
+
+var bike4 = L.geoJson(null, {
+    filter : function(feature, latlng) {
+        return feature.properties.unused > -4 & feature.properties.unused <= -2;
+    },
+    pointToLayer : pointToLayer,
+    onEachFeature : onEachFeatureBike
+});
+var bike4Layer = L.geoJson(null);
+
+var bike7 = L.geoJson(null, {
+    filter : function(feature, latlng) {
+        return feature.properties.unused > -7 & feature.properties.unused <= -4;
+    },
+    pointToLayer : pointToLayer,
+    onEachFeature : onEachFeatureBike
+});
+var bike7Layer = L.geoJson(null);
+
+var bike100 = L.geoJson(null, {
+    filter : function(feature, latlng) {
+        return feature.properties.unused <= -7;
+    },
+    pointToLayer : pointToLayer,
+    onEachFeature : onEachFeatureBike
+});
+
+var bike100Layer = L.geoJson(null);
+
 var allbikeslatestpositionLayer = L.geoJson(null);
 var allbikeslatestposition = L.geoJson(null, {
     pointToLayer: pointToLayer,
     onEachFeature: onEachFeatureBike
 });
+
 $.getJSON("/kvbradpositions/service/allbikeslatestposition?geojson", function(data) {
-	allbikeslatestposition.addData(data);
-	map.addLayer(allbikeslatestposition);
+	bike2.addData(data);
+	bike4.addData(data);
+	bike7.addData(data);
+	bike100.addData(data);
+	map.addLayer(bike2Layer);
+	map.addLayer(bike4Layer);
+	map.addLayer(bike7Layer);
+	map.addLayer(bike100Layer);
 });
 
 
@@ -228,14 +299,32 @@ map = L.map("map", {
 
 /* Layer control listeners that allow for a single markerClusters layer */
 map.on("overlayadd", function(e) {
-	if (e.layer === allAnalysisLayer) {
-		markerClusters.addLayer(allAnalysis);
+	if (e.layer === bike2Layer) {
+		markerClusters.addLayer(bike2);
+	}
+	if (e.layer === bike4Layer) {
+		markerClusters.addLayer(bike4);
+	}
+	if (e.layer === bike7Layer) {
+		markerClusters.addLayer(bike7);
+	}
+	if (e.layer === bike100Layer) {
+		markerClusters.addLayer(bike100);
 	}
 });
 
 map.on("overlayremove", function(e) {
-	if (e.layer === allAnalysisLayer) {
-		markerClusters.removeLayer(allAnalysis);
+	if (e.layer === bike2Layer) {
+		markerClusters.removeLayer(bike2);
+	}
+	if (e.layer === bike4Layer) {
+		markerClusters.removeLayer(bike4);
+	}
+	if (e.layer === bike7Layer) {
+		markerClusters.removeLayer(bike7);
+	}
+	if (e.layer === bike100Layer) {
+		markerClusters.removeLayer(bike100);
 	}
 });
 
@@ -313,11 +402,6 @@ if (document.body.clientWidth <= 767) {
 } else {
 	var isCollapsed = false;
 }
-
-var baseLayers = {
-	"Street Map" : mapquestOSM
-};
-
 
 /* Highlight search box text on click */
 $("#searchbox").click(function() {
@@ -404,6 +488,27 @@ $(document)
 //} else {
 //	L.DomEvent.disableClickPropagation(container);
 //}
+
+var baseLayers = {
+	"Street Map" : mapquestOSM
+};
+
+var groupedOverlays = {
+	"Wegenutzung": {
+	    "alle": allAnalysisLayer
+	 },
+	"Zuletzt verwendet": {
+    "&nbsp;Gestern oder heute": bike2Layer,
+    "&nbsp;&lt; 4 Tage": bike4Layer,
+    "&nbsp;&lt; 7 Tage": bike7Layer,
+    "&nbsp;länger": bike100Layer
+  }
+};
+
+var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
+  collapsed: isCollapsed
+}).addTo(map);
+
 
 // datatable
 $(document).ready(function() {
