@@ -1,6 +1,8 @@
 #Installationsbeschreibung
 
-Die folgende Installationsbeschreibung setzt ein frisch aufgesetztes Ubuntu 14.04 voraussetzt. Für die Installation der Anwendung werden die Sourcen von github heruntergeladen und mit maven gebaut. Die Anwendung ist in Java geschrieben und benötigt neben Java, Maven, Tomcat, PostgreSQL mit PostGis auch einen Graphhopper Service. Im folgenden werden folgende Tools installiert:
+Hier wird beschrieben, wie die vollständige Anwendung 'KVB Fahrräder in Köln' installiert wird. Es werden sämtliche Tools genannt, sowie auf die einzelnen Services eingegangen.
+
+Voraussetzung ist ein frisch aufgesetztes Ubuntu 14.04 Server. Für die Installation der Anwendung werden die Sourcen von github heruntergeladen und mit maven gebaut. Die Anwendung ist in Java geschrieben und benötigt neben Java, Maven, Tomcat, PostgreSQL mit PostGis auch einen Graphhopper Service. Im folgenden werden folgende Tools installiert:
 
 1. java
 2. maven
@@ -203,8 +205,15 @@ kvbrad
 
 ## Services in cron einbinden
 
-curl -X PUT http://localhost:8080/kvbradlive/service/put
-curl -X PUT http://localhost:8080/kvbradrouting/service/put
+Für regelmäßige updates muss crontab angepasst werden. Da ich mit vi besser zurechtkomme, als mit nano, verwende ich hier den vim:
+
+    sudo EDITOR=vim.tiny crontab -e
+    
+Folgende Einträge müssen vorgenommen werden.
+
+    */10 * * * * curl -X PUT http://localhost:8080/kvbradlive/service/put
+    3 2 * * * curl -X PUT http://localhost:8080/kvbradrouting/service/put
+    3 3 * * * curl -X PUT http://localhost:8080/kvbradanalysis/service/put
 
 ## Services aktualisieren
 
