@@ -512,7 +512,7 @@ var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
 
 // datatable
 $(document).ready(function() {
-	$('#bikes').DataTable({
+	var table = $('#bikes').DataTable({
 		"ajax" : "/kvbradpositions/service/allbikeslatestposition?datatables",
 		"columns" : [ {
 			"data" : "number"
@@ -528,4 +528,29 @@ $(document).ready(function() {
 			"data" : "count"
 		} ]
 	});
+	
+	$('#bikes tbody').on('click', 'tr', 
+			  function() {
+			    if ($(this).hasClass('selected')) {
+				  var data = table.row( this ).data();
+			      //alert('hasClass selected');
+				  $(this).removeClass('selected');
+				} else {
+				  table.$('tr.selected').removeClass('selected');
+				  $(this).addClass('selected');
+				  var number = table.row( this ).data().number;
+			      //alert('selected number = ' + number);
+				  $.ajax({
+				    url: "/kvbradpositions/service/bike/" + number + "?geojson", 
+				    success: function(data){
+				    	var bikeLinestringLayer = L.geoJson(null);
+				    	bikeLinestringLayer.addData(data);
+				    	map.addLayer(bikeLinestringLayer);
+				    }
+				  })
+				}
+			  }
+			);
+
 });
+

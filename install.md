@@ -78,6 +78,38 @@ kopieren der postgres libs in das tomcat-Verzeichnis
     wget http://central.maven.org/maven2/org/postgresql/postgresql/9.3-1100-jdbc41/postgresql-9.3-1100-jdbc41.jar
     mv postgresql-9.3-1100-jdbc41.jar /opt/tomcat/lib
 
+Konfiguration Datenbank Verbindung
+
+Folgende Parameter müssen im Server gesetzt sein, damit die Services die Datenbank erkennen können:
+
+context.xml
+
+    vi /opt/tomcat/conf/context.xml
+
+    <Context>
+        <ResourceLink
+             name="jdbc/kvbrad"
+             global="jdbc/kvbrad"
+             type="javax.sql.DataSource" />
+    </Context>
+
+server.xml
+
+    vi /opt/tomcat/conf/server.xml
+
+    <GlobalNamingResources>
+        <Resource
+            name="jdbc/kvbrad"
+            auth="Container"
+            driverClassName="org.postgresql.Driver"
+            maxTotal="25"
+            maxIdle="10"
+            username="username"
+            password="password"
+            type="javax.sql.DataSource"
+            url="jdbc:postgresql://localhost:5432/kvbrad"
+            validationQuery="select 1"/>
+
 # graphhopper
 
 Graphhopper wird, wie die anderen Tools im Verzeichns /opt installiert. Nach der Installation wird der user graphhopper eingerichtet und mit ihm der Service betrieben. Diese Installation setzt lediglich die Bereich von NRW voraus. Für größere Bereiche muss der zugewiesene Speicher erhöht werden.
@@ -147,10 +179,6 @@ Anmelden an der Datenbank (abmelden mit '\q'; OSX: SHIFT + ALT + 7 q)
 
     psql -h localhost -U kvbrad kvbrad
 
-Script zum Initialisieren ausführen (ZZZ: Skripte sollen in src/main/sql je Anwendung liegen)
-
-    psql -h localhost -U kvbrad -d kvbrad -a -f kvbradlive.init.sql
-
 ## Services installieren
 
 Voraussetzung:
@@ -171,8 +199,6 @@ kvbradrouting
     git clone https://github.com/codeforcologne/kvbradrouting.git
     psql -h localhost -U kvbrad -d kvbrad -a -f kvbradrouting/src/main/sql/kvbradrouting.init.sql
     cd kvbradrouting
-    cp src/main/resources/config.properties.template src/main/resources/config.properties
-    vi src/main/resources/config.properties
     mvn clean install
     chmod 775 target/kvbradrouting.war
     cp target/kvbradrouting.war /opt/tomcat/webapps
@@ -181,10 +207,12 @@ kvbradanalysis
 
     git clone https://github.com/codeforcologne/kvbradanalysis.git
     psql -h localhost -U kvbrad -d kvbrad -a -f kvbradanalysis/src/main/sql/kvbradanalysis.init.sql
-    cp src/main/resources/config.properties.template src/main/resources/config.properties
-    vi src/main/resources/config.properties
+    cd kvbradanalysis
+    cp src/main/resources/config.properties.template src/main/resources/config.properties    
     cp src/test/resources/jndi.properties.template src/test/resources/jndi.properties
-    vi src/test/resources/jndi.properties
+    mvn clean install
+    chmod 775 target/kvbradanalysis.war
+    cp target/kvbradanalysis.war /opt/tomcat/webapps
 
 kvbradpositions
 
@@ -208,7 +236,7 @@ kvbrad
 Für regelmäßige updates muss crontab angepasst werden. Da ich mit vi besser zurechtkomme, als mit nano, verwende ich hier den vim:
 
     sudo EDITOR=vim.tiny crontab -e
-    
+
 Folgende Einträge müssen vorgenommen werden.
 
     */10 * * * * curl -X PUT http://localhost:8080/kvbradlive/service/put
