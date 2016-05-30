@@ -110,6 +110,19 @@ server.xml
             url="jdbc:postgresql://localhost:5432/kvbrad"
             validationQuery="select 1"/>
 
+web.xml
+
+Um anderen Web-Applikationen den Zugriff auf die Services zu ermöglichen, wird im Apache der CorsFilter aktiviert. Der Eintrag erfolgt im Bereich 'Built In Filter Mappings' der web.xml
+
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 # graphhopper
 
 Graphhopper wird, wie die anderen Tools im Verzeichns /opt installiert. Nach der Installation wird der user graphhopper eingerichtet und mit ihm der Service betrieben. Diese Installation setzt lediglich die Bereich von NRW voraus. Für größere Bereiche muss der zugewiesene Speicher erhöht werden.
@@ -128,7 +141,7 @@ _ZZZ_: TBD
     cd /opt/graphhopper
     wget http://download.geofabrik.de/europe/germany/nordrhein-westfalen-latest.osm.pbf
 
-    starten des Services; 'nohup &' erlauben nach dem Start des Serivces, sich abzumelden.
+starten des Services; 'nohup &' erlauben nach dem Start des Serivces, sich abzumelden.
 
     export JAVA_OPTS="-Xmx256m -Xms256m -server -XX:+HeapDumpOnOutOfMemoryError"
     ./graphhopper.sh web nordrhein-westfalen-latest.osm-gh nohup &
@@ -140,6 +153,8 @@ Graphhopper kann auf einem schnellen Rechhner vorbereitet werden; es werden dann
 Graphhopper in ein tar.gz packen
 
     sudo tar -czf graphhopper.tar.gz graphhopper/
+
+Danach an geeigneter Stelle herunterladen, entpacken und Benutzerrechte setzen 
 
     sudo wget http://myserver/graphhopper.tar.gz
     sudo tar -xzf archiv.tar.gz
