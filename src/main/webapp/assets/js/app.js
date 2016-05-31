@@ -540,12 +540,15 @@ $(document).ready(function() {
 				  $(this).addClass('selected');
 				  var number = table.row( this ).data().number;
 			      //alert('selected number = ' + number);
+				  var bikeLinestringLayer = L.geoJson(null);
 				  $.ajax({
 				    url: "/kvbradpositions/service/bike/" + number + "?geojson", 
 				    success: function(data){
-				    	var bikeLinestringLayer = L.geoJson(null);
+				    	//map.removeLayer(allAnalysisLayer);
+				    	$("#legendModal").modal("hide");
 				    	bikeLinestringLayer.addData(data);
 				    	map.addLayer(bikeLinestringLayer);
+				    	map.fitBounds(bikeLinestringLayer.getBounds());
 				    }
 				  })
 				}
