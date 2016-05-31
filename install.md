@@ -125,7 +125,7 @@ Um anderen Web-Applikationen den Zugriff auf die Services zu ermöglichen, wird 
 
 # graphhopper
 
-Graphhopper wird, wie die anderen Tools im Verzeichns /opt installiert. Nach der Installation wird der user graphhopper eingerichtet und mit ihm der Service betrieben. Diese Installation setzt lediglich die Bereich von NRW voraus. Für größere Bereiche muss der zugewiesene Speicher erhöht werden.
+Graphhopper wird, wie die anderen Tools im Verzeichns /opt installiert. Nach der Installation wird der user graphhopper eingerichtet und mit ihm der Service betrieben. Diese Installation setzt lediglich die Bereich des Regierungsbezirk Köln voraus. Für größere Bereiche muss der zugewiesene Speicher erhöht der entsprechende Bereich von geofabrik heruntergeladen werden.
 
     cd /opt
 
@@ -139,12 +139,12 @@ _ZZZ_: TBD
     sudo chown -R graphhopper:graphhopper graphhopper/
     sudo su - graphhopper
     cd /opt/graphhopper
-    wget http://download.geofabrik.de/europe/germany/nordrhein-westfalen-latest.osm.pbf
+    wget http://download.geofabrik.de/europe/germany/nordrhein-westfalen/koeln-regbez-latest.osm.pbf
 
 starten des Services; 'nohup &' erlauben nach dem Start des Serivces, sich abzumelden.
 
     export JAVA_OPTS="-Xmx256m -Xms256m -server -XX:+HeapDumpOnOutOfMemoryError"
-    ./graphhopper.sh web nordrhein-westfalen-latest.osm-gh nohup &
+    ./graphhopper.sh web koeln-regbez-latest.osm-gh nohup &
 
 ## alterative
 
@@ -154,10 +154,10 @@ Graphhopper in ein tar.gz packen
 
     sudo tar -czf graphhopper.tar.gz graphhopper/
 
-Danach an geeigneter Stelle herunterladen, entpacken und Benutzerrechte setzen 
+Danach an geeigneter Stelle herunterladen, entpacken und Benutzerrechte setzen
 
     sudo wget http://myserver/graphhopper.tar.gz
-    sudo tar -xzf archiv.tar.gz
+    sudo tar -xzf graphhopper.tar.gz
     sudo adduser graphhopper
     sudo chown -R graphhopper:graphhopper graphhopper/
     sudo su - graphhopper
@@ -166,7 +166,7 @@ Danach an geeigneter Stelle herunterladen, entpacken und Benutzerrechte setzen
 starten des Services; 'nohup &' erlauben nach dem Start des Serivces, sich abzumelden.
 
     export JAVA_OPTS="-Xmx256m -Xms256m -server -XX:+HeapDumpOnOutOfMemoryError"
-    ./graphhopper.sh web nordrhein-westfalen-latest.osm-gh nohup &
+    ./graphhopper.sh web koeln-regbez-latest.osm-gh nohup &
 
 ## Datenbank installieren
 
