@@ -85,17 +85,19 @@ var attr = '<h4>Attribution</h4><a href=\'https://github.com/bmcbride/bootleaf\'
 		+ '<a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank">leaflet marker cluster plugin</a>, '
 		+ '<a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>, '
 		+ 'Powered by <a href="https://graphhopper.com/#directions-api">GraphHopper API</a>';
-var mapquestOSM = 
-	L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
-    	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    });
-	
-//	L.tileLayer(
-//		"http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png", {
-//			maxZoom : 18,
-//			subdomains : [ "otile1", "otile2", "otile3", "otile4" ],
-//			attribution : attr
-//		});
+var mapquestOSM = L
+		.tileLayer(
+				'http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png',
+				{
+					attribution : 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+				});
+
+// L.tileLayer(
+// "http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png", {
+// maxZoom : 18,
+// subdomains : [ "otile1", "otile2", "otile3", "otile4" ],
+// attribution : attr
+// });
 
 /* Overlay Layers */
 var highlight = L.geoJson(null);
@@ -110,23 +112,23 @@ var progress = document.getElementById('progress');
 var progressBar = document.getElementById('progress-bar');
 
 function updateProgressBar(processed, total, elapsed, layersArray) {
-    if (elapsed > 10) {
-        // if it takes more than a second to load, display the progress bar:
-        progress.style.display = 'block';
-        progressBar.style.width = Math.round(processed/total*100) + '%';
-    }
+	if (elapsed > 10) {
+		// if it takes more than a second to load, display the progress bar:
+		progress.style.display = 'block';
+		progressBar.style.width = Math.round(processed / total * 100) + '%';
+	}
 
-    if (processed === total) {
-        // all markers processed - hide the progress bar:
-        progress.style.display = 'none';
-    }
+	if (processed === total) {
+		// all markers processed - hide the progress bar:
+		progress.style.display = 'none';
+	}
 }
 
 var markerClusters = new L.MarkerClusterGroup({
-    chunkedLoading: true,
-    chunkProgress: updateProgressBar,
-    disableClusteringAtZoom : 15,
-    showCoverageOnHover : false
+	chunkedLoading : true,
+	chunkProgress : updateProgressBar,
+	disableClusteringAtZoom : 15,
+	showCoverageOnHover : false
 });
 
 function onEachFeatureBike(feature, layer) {
@@ -153,8 +155,7 @@ function onEachFeatureBike(feature, layer) {
 				+ unused
 				+ "</td></tr>"
 				+ "<tr><th>Coordinates</th><td>"
-				+ feature.geometry.coordinates
-				+ "</td></tr>" + "<table>";
+				+ feature.geometry.coordinates + "</td></tr>" + "<table>";
 		layer.on({
 			click : function(e) {
 				$("#feature-title").html(feature.properties.number);
@@ -189,10 +190,10 @@ function onEachFeatureBike(feature, layer) {
 }
 
 var allAnalysisLayer = L.geoJson(null, {
-	style : function (feature) {
+	style : function(feature) {
 		return {
-	    	color :feature.properties.color,
-	    	"opacity": 1.0
+			color : feature.properties.color,
+			"opacity" : 1.0
 		};
 	}
 });
@@ -203,81 +204,86 @@ $.getJSON("/kvbradanalysis/service/data?geojson", function(data) {
 
 function pointToLayer(feature, latlng) {
 
-    var fillColor = '';
-    if (feature.properties.unused > -2) {
-        fillColor = '#1a9641';
-    } else if (feature.properties.unused > -4) {
-    	fillColor = '#fdae61';
-    } else if (feature.properties.unused > -7) {
-    	fillColor = '#d7191c';
-    } else {
-    	fillColor = '#777777';
-    }
+	var fillColor = '';
+	if (feature.properties.unused > -2) {
+		fillColor = '#1a9641';
+	} else if (feature.properties.unused > -4) {
+		fillColor = '#fdae61';
+	} else if (feature.properties.unused > -7) {
+		fillColor = '#d7191c';
+	} else {
+		fillColor = '#777777';
+	}
 
-    return L.circleMarker(latlng, {
-        radius : 10,
-        fillColor : fillColor,
-        color : '#000',
-        weight : 1,
-        opacity : 0.5,
-        fillOpacity : 0.5
-    });
+	return L.circleMarker(latlng, {
+		radius : 10,
+		fillColor : fillColor,
+		color : '#000',
+		weight : 1,
+		opacity : 0.5,
+		fillOpacity : 0.5
+	});
 }
 
 function getBikes(unused) {
-    return L.geoJson(null, {
-        filter : function(feature, latlng) {
-            return feature.properties.unused > unused;
-        },
-        pointToLayer : pointToLayer,
-        onEachFeature : onEachFeatureBike
-    });
+	return L.geoJson(null, {
+		filter : function(feature, latlng) {
+			return feature.properties.unused > unused;
+		},
+		pointToLayer : pointToLayer,
+		onEachFeature : onEachFeatureBike
+	});
 }
 
 var bike2 = L.geoJson(null, {
-    filter : function(feature, latlng) {
-        return feature.properties.unused > -2;
-    },
-    pointToLayer : pointToLayer,
-    onEachFeature : onEachFeatureBike
+	filter : function(feature, latlng) {
+		return feature.properties.unused > -2;
+	},
+	pointToLayer : pointToLayer,
+	onEachFeature : onEachFeatureBike
 });
 var bike2Layer = L.geoJson(null);
 
-var bike4 = L.geoJson(null, {
-    filter : function(feature, latlng) {
-        return feature.properties.unused > -4 & feature.properties.unused <= -2;
-    },
-    pointToLayer : pointToLayer,
-    onEachFeature : onEachFeatureBike
-});
+var bike4 = L.geoJson(null,
+		{
+			filter : function(feature, latlng) {
+				return feature.properties.unused > -4
+						& feature.properties.unused <= -2;
+			},
+			pointToLayer : pointToLayer,
+			onEachFeature : onEachFeatureBike
+		});
 var bike4Layer = L.geoJson(null);
 
-var bike7 = L.geoJson(null, {
-    filter : function(feature, latlng) {
-        return feature.properties.unused > -7 & feature.properties.unused <= -4;
-    },
-    pointToLayer : pointToLayer,
-    onEachFeature : onEachFeatureBike
-});
+var bike7 = L.geoJson(null,
+		{
+			filter : function(feature, latlng) {
+				return feature.properties.unused > -7
+						& feature.properties.unused <= -4;
+			},
+			pointToLayer : pointToLayer,
+			onEachFeature : onEachFeatureBike
+		});
 var bike7Layer = L.geoJson(null);
 
 var bike100 = L.geoJson(null, {
-    filter : function(feature, latlng) {
-        return feature.properties.unused <= -7;
-    },
-    pointToLayer : pointToLayer,
-    onEachFeature : onEachFeatureBike
+	filter : function(feature, latlng) {
+		return feature.properties.unused <= -7;
+	},
+	pointToLayer : pointToLayer,
+	onEachFeature : onEachFeatureBike
 });
 
 var bike100Layer = L.geoJson(null);
 
 var allbikeslatestpositionLayer = L.geoJson(null);
 var allbikeslatestposition = L.geoJson(null, {
-    pointToLayer: pointToLayer,
-    onEachFeature: onEachFeatureBike
+	pointToLayer : pointToLayer,
+	onEachFeature : onEachFeatureBike
 });
 
-$.getJSON("/kvbradpositions/service/allbikeslatestposition?geojson", function(data) {
+$.getJSON("/kvbradpositions/service/allbikeslatestposition?geojson", function(
+		data) {
 	bike2.addData(data);
 	bike4.addData(data);
 	bike7.addData(data);
@@ -287,7 +293,6 @@ $.getJSON("/kvbradpositions/service/allbikeslatestposition?geojson", function(da
 	map.addLayer(bike7Layer);
 	map.addLayer(bike100Layer);
 });
-
 
 map = L.map("map", {
 	zoom : 15,
@@ -445,17 +450,21 @@ $(document)
 
 					// instantiate the typeahead UI
 					$("#searchbox")
-							.typeahead({
+							.typeahead(
+									{
 										minLength : 3,
 										highlight : true,
 										hint : false
-									}, {
+									},
+									{
 										name : "Bikes",
 										displayKey : "number",
 										source : allBikesBH.ttAdapter(),
 										templates : {
 											header : "<h4 class='typeahead-header'><img src='assets/img/logo_kvb_37.png' width='24' height='28'>&nbsp;Bikes</h4>",
-											suggestion : Handlebars.compile([ "<small>{{number}}</small></br><i>{{timestamp}}</i></small>" ].join(""))
+											suggestion : Handlebars
+													.compile([ "<small>{{number}}</small></br><i>{{timestamp}}</i></small>" ]
+															.join(""))
 										}
 									})
 							.on("typeahead:selected", function(obj, datum) {
@@ -469,10 +478,20 @@ $(document)
 								if ($(".navbar-collapse").height() > 50) {
 									$(".navbar-collapse").collapse("hide");
 								}
-							}).on("typeahead:opened", function() {
-								$(".navbar-collapse.in").css("max-height", $(document).height() - $(".navbar-header").height());
-								$(".navbar-collapse.in").css("height", $(document).height() - $(".navbar-header").height());
-							}).on("typeahead:closed", function() {
+							}).on(
+									"typeahead:opened",
+									function() {
+										$(".navbar-collapse.in").css(
+												"max-height",
+												$(document).height()
+														- $(".navbar-header")
+																.height());
+										$(".navbar-collapse.in").css(
+												"height",
+												$(document).height()
+														- $(".navbar-header")
+																.height());
+									}).on("typeahead:closed", function() {
 								$(".navbar-collapse.in").css("max-height", "");
 								$(".navbar-collapse.in").css("height", "");
 							});
@@ -481,34 +500,60 @@ $(document)
 				});
 
 // Leaflet patch to make layer control scrollable on touch browsers
-//var container = $(".leaflet-control-layers")[0];
-//if (!L.Browser.touch) {
-//	L.DomEvent.disableClickPropagation(container).disableScrollPropagation(
-//			container);
-//} else {
-//	L.DomEvent.disableClickPropagation(container);
-//}
+// var container = $(".leaflet-control-layers")[0];
+// if (!L.Browser.touch) {
+// L.DomEvent.disableClickPropagation(container).disableScrollPropagation(
+// container);
+// } else {
+// L.DomEvent.disableClickPropagation(container);
+// }
 
 var baseLayers = {
 	"Street Map" : mapquestOSM
 };
 
 var groupedOverlays = {
-	"Wegenutzung": {
-	    "alle": allAnalysisLayer
-	 },
-	"Zuletzt verwendet": {
-    "<img src='assets/img/1a9641.gif' width='16' height='16'>&nbsp;Gestern oder heute": bike2Layer,
-    "<img src='assets/img/fdae61.gif' width='16' height='16'>&nbsp;&lt; 4 Tage": bike4Layer,
-    "<img src='assets/img/d7191c.gif' width='16' height='16'>&nbsp;&lt; 7 Tage": bike7Layer,
-    "<img src='assets/img/777777.gif' width='16' height='16'>&nbsp;länger": bike100Layer
-  }
+	"Wegenutzung" : {
+		"alle" : allAnalysisLayer
+	},
+	"Zuletzt verwendet" : {
+		"<img src='assets/img/1a9641.gif' width='16' height='16'>&nbsp;Gestern oder heute" : bike2Layer,
+		"<img src='assets/img/fdae61.gif' width='16' height='16'>&nbsp;&lt; 4 Tage" : bike4Layer,
+		"<img src='assets/img/d7191c.gif' width='16' height='16'>&nbsp;&lt; 7 Tage" : bike7Layer,
+		"<img src='assets/img/777777.gif' width='16' height='16'>&nbsp;länger" : bike100Layer
+	}
 };
 
 var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
-  collapsed: isCollapsed
+	collapsed : isCollapsed
 }).addTo(map);
 
+function getRouteLayerStyle() {
+
+}
+
+var bikeLinestringLayer = L.geoJson(null, {
+	onEachFeature : onEachFeatureLinestringLayer
+});
+
+function deleteLinestringLayer(id) {
+	bikeLinestringLayer.removeLayer(id);
+}
+
+function getPopupContentForLinestringLayer(id, feature, layer) {
+	return "<form name=\"linestringForm" + feature.id + "\">"
+			+ "<div>"
+			+ "<input type='button' id=\"" + id
+			+ "\" value='Linie f&uuml;r " + feature.properties.name + " entfernen' onclick=\"deleteLinestringLayer(id)\"/>"
+			+ "</div></form>";
+}
+
+function onEachFeatureLinestringLayer(feature, layer) {
+	bikeLinestringLayer.addLayer(layer);
+	var id = bikeLinestringLayer.getLayerId(layer);
+	var popupContent = getPopupContentForLinestringLayer(id,feature, layer);
+	layer.bindPopup(popupContent);
+}
 
 // datatable
 $(document).ready(function() {
@@ -528,32 +573,29 @@ $(document).ready(function() {
 			"data" : "count"
 		} ]
 	});
-	
-	$('#bikes tbody').on('click', 'tr', 
-			  function() {
-			    if ($(this).hasClass('selected')) {
-				  var data = table.row( this ).data();
-			      //alert('hasClass selected');
-				  $(this).removeClass('selected');
-				} else {
-				  table.$('tr.selected').removeClass('selected');
-				  $(this).addClass('selected');
-				  var number = table.row( this ).data().number;
-			      //alert('selected number = ' + number);
-				  var bikeLinestringLayer = L.geoJson(null);
-				  $.ajax({
-				    url: "/kvbradpositions/service/bike/" + number + "?geojson", 
-				    success: function(data){
-				    	//map.removeLayer(allAnalysisLayer);
-				    	$("#legendModal").modal("hide");
-				    	bikeLinestringLayer.addData(data);
-				    	map.addLayer(bikeLinestringLayer);
-				    	map.fitBounds(bikeLinestringLayer.getBounds());
-				    }
-				  })
+
+	$('#bikes tbody').on('click', 'tr', function() {
+		if ($(this).hasClass('selected')) {
+			var data = table.row(this).data();
+			// alert('hasClass selected');
+			$(this).removeClass('selected');
+		} else {
+			table.$('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+			var number = table.row(this).data().number;
+			// alert('selected number = ' + number);
+
+			$.ajax({
+				url : "/kvbradpositions/service/bike/" + number + "?geojson",
+				success : function(data) {
+					// map.removeLayer(allAnalysisLayer);
+					$("#legendModal").modal("hide");
+					bikeLinestringLayer.addData(data);
+					map.addLayer(bikeLinestringLayer);
+					map.fitBounds(bikeLinestringLayer.getBounds());
 				}
-			  }
-			);
+			})
+		}
+	});
 
 });
-
