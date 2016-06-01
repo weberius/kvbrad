@@ -124,13 +124,23 @@
 					<div class="tab-content" id="aboutTabsContent">
 						<div class="tab-pane fade active in" id="about">
 							<p>
-								Diese Webseite zeigt auf Basis der <a
+							Die Webapplikation KVB Fahrräder stellt eine mögliche Nutzung Kölns durch Fahrräder dar. 
+							Grundlage hierfür sind die Daten, die durch <a
 									href="http://www.offenedaten-koeln.de/dataset/standorte-fahrradverleih-koeln-kvb-rad"
-									target="_blank">Standorte Fahrradverleih Koeln - KVB-Rad</a>.
-								Diese werden durch das <a
-									href="http://www.offenedaten-koeln.de/" target="_blank">Offene
-									Daten Portal</a> der <a href="http://www.koeln.de" target="_blank">Stadt
-									Köln</a> zur Verfügung gestellt.
+									target="_blank">Standorte Fahrradverleih Koeln - KVB-Rad</a> zur Verfügung gestellt 
+							werden in Kombination mit Daten von <a href="http://www.openstreetmap.de/">openstreetmap</a>.
+							</p>
+							<p>
+							Ziel ist es durch farbige Markierungen im Stil der google-Maps Verkehrslage die Nutzung der Verkehrswege durch 
+							Fahrräder in Köln als wahrscheinlich häufiger verwendet und wahrscheinlich weniger häufig verwendet darzustellen.
+							</p><p>
+							Hierfür werden in regelmäßigen Abständen die Standorte Fahrradverleih Koeln - KVB-Rad abgefragt und die 
+							Strecken zwischen den somit erfassten Punkten durch Graphhopper geroutet. Danach werden die so ermittelten 
+							Routen in ihre kürzestmöglichen Abschnitte unterteilt. Diese Abschnitte werden abgespeichert und können dann gezählt werden. 
+							Solche, die besonders häufig vorkommen, werden rot auf der Karte dargestellt, solche, die eher weniger häufig vorkommen, grün.
+							</p><p>
+							Dieses Projekt befindet sich in der Entwicklung. Die Sourcen finden sich unter 
+							<a href="https://github.com/codeforcologne/kvbrad">https://github.com/codeforcologne/kvbrad</a>.
 							</p>
 							<div class="panel panel-primary">
 								<div class="panel-heading">Features</div>
@@ -145,6 +155,11 @@
 									<li class="list-group-item">Routing wird mit Hilfe von <a
 										href="https://graphhopper.com/" target="_blank">Graphhopper</a>
 										ermittelt.
+									</li>
+									<li class="list-group-item">
+									Map tiles by <a href="http://stamen.com">Stamen Design</a>, 
+									<a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; 
+									Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
 									</li>
 								</ul>
 							</div>
