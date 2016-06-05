@@ -528,27 +528,54 @@ var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
 	collapsed : isCollapsed
 }).addTo(map);
 
-function getRouteLayerStyle() {
-
+//pointToLayer(feature, latlng)
+function getLayerStyleForPoints(feature, latlng) {
+	return L.marker(latlng, {
+		icon: L.divIcon({ 
+			    iconSize: new L.Point(35, 35), 
+			    html: feature.properties.timestamp
+			})
+	});
 }
 
+function getLayerStyleForStrings() {
+	console.log("getLayerStyleForStrings");
+}
+
+function pointToLayerForBike(feature, latlng) {
+	if ("Point" === feature.geometry.type) {
+		return getLayerStyleForPoints(feature, latlng);
+	} else {
+		return getLayerStyleForStrings(feature, latlng);
+	}
+}
+
+var bikeFeatureGroup = L.featureGroup(null);
+
 var bikeLinestringLayer = L.geoJson(null, {
-	onEachFeature : onEachFeatureLinestringLayer
+	onEachFeature : onEachFeatureLinestringLayer,
+	pointToLayer : pointToLayerForBike
 });
 
 function deleteLinestringLayer(id) {
-	bikeLinestringLayer.removeLayer(id);
+	map.removeLayer(bikeFeatureGroup);
+	map.addLayer(bike2Layer);
+	map.addLayer(bike4Layer);
+	map.addLayer(bike7Layer);
+	map.addLayer(bike100Layer);
+	map.fitBounds(allAnalysisLayer.getBounds());
 }
 
 function getPopupContentForLinestringLayer(id, feature, layer) {
 	return "<form name=\"linestringForm" + feature.id + "\">"
 			+ "<div>"
 			+ "<input type='button' id=\"" + id
-			+ "\" value='Linie f&uuml;r " + feature.properties.name + " entfernen' onclick=\"deleteLinestringLayer(id)\"/>"
+			+ "\" value='Fahrradinformationen entfernen' onclick=\"deleteLinestringLayer(id)\"/>"
 			+ "</div></form>";
 }
 
 function onEachFeatureLinestringLayer(feature, layer) {
+	console.log(feature.geometry.type);
 	bikeLinestringLayer.addLayer(layer);
 	var id = bikeLinestringLayer.getLayerId(layer);
 	var popupContent = getPopupContentForLinestringLayer(id,feature, layer);
@@ -588,10 +615,17 @@ $(document).ready(function() {
 			$.ajax({
 				url : "/kvbradpositions/service/bike/" + number + "?geojson",
 				success : function(data) {
-					// map.removeLayer(allAnalysisLayer);
+					
+					map.removeLayer(allAnalysisLayer);
+					map.removeLayer(bike2Layer);
+					map.removeLayer(bike4Layer);
+					map.removeLayer(bike7Layer);
+					map.removeLayer(bike100Layer);
+					
 					$("#legendModal").modal("hide");
 					bikeLinestringLayer.addData(data);
-					map.addLayer(bikeLinestringLayer);
+					bikeFeatureGroup = L.featureGroup([bikeLinestringLayer]);
+					map.addLayer(bikeFeatureGroup);
 					map.fitBounds(bikeLinestringLayer.getBounds());
 				}
 			})
