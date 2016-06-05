@@ -558,6 +558,10 @@ var bikeLinestringLayer = L.geoJson(null, {
 });
 
 function deleteLinestringLayer(id) {
+	bikeLinestringLayer = L.geoJson(null, {
+		onEachFeature : onEachFeatureLinestringLayer,
+		pointToLayer : pointToLayerForBike
+	});
 	map.removeLayer(bikeFeatureGroup);
 	map.addLayer(bike2Layer);
 	map.addLayer(bike4Layer);
