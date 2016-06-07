@@ -1,5 +1,16 @@
 var map, featureList, allBikesearch = [];
 
+var isChromium = window.chrome;
+var vendorName = window.navigator.vendor;
+var isOpera = window.navigator.userAgent.indexOf("OPR") > -1;
+var isIEedge = window.navigator.userAgent.indexOf("Edge") > -1;
+
+var isBrowserGoogleChrome = isChromium !== null && isChromium !== undefined && vendorName === "Google Inc." && isOpera == false && isIEedge == false;
+
+if(!isBrowserGoogleChrome) {
+  alert("Webapp in development; please use Google chrome to get 'Wegenutzung'");
+}
+
 $(window).resize(function() {
 	sizeLayerControl();
 });
@@ -199,7 +210,9 @@ var allAnalysisLayer = L.geoJson(null, {
 });
 $.getJSON("/kvbradanalysis/service/data?geojson", function(data) {
 	allAnalysisLayer.addData(data);
-	map.addLayer(allAnalysisLayer);
+	if (isBrowserGoogleChrome) {
+		map.addLayer(allAnalysisLayer);
+	}
 });
 
 function pointToLayer(feature, latlng) {
