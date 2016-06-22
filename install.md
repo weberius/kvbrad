@@ -257,6 +257,9 @@ Folgende Einträge müssen vorgenommen werden.
     */10 * * * * curl -X PUT http://localhost:8080/kvbradlive/service/put
     3 2 * * * curl -X PUT http://localhost:8080/kvbradrouting/service/put
     3 3 * * * curl -X PUT http://localhost:8080/kvbradanalysis/service/put
+    2 2 * * * curl -X DELETE http://localhost:8080/kvbradrouting/service/delete
+    2 2 * * * curl -X DELETE http://localhost:8080/kvbradrouting/service/delete
+    2 2 * * * curl -X DELETE http://localhost:8080/kvbradlive/service/delete
 
 ## Services aktualisieren
 
