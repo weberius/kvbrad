@@ -209,7 +209,10 @@ var allAnalysisLayer = L.geoJson(null, {
 	}
 });
 $.getJSON("/kvbradanalysis/service/data?geojson", function(data) {
-	allAnalysisLayer.addData(data);
+	var fc = turf.featurecollection(data);
+	var combined = turf.combine(fc);
+
+	allAnalysisLayer.addData(combined);
 	if (isBrowserGoogleChrome) {
 		map.addLayer(allAnalysisLayer);
 	}
